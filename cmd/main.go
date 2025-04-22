@@ -41,6 +41,7 @@ func main() {
 		// API routes
 		app.Get("/health", api.HealthCheck)
 		app.Post("/import-csv", api.ImportCSV(db))
+		app.Get("/import-status", api.GetImportStatus)
 
 		log.Fatal(app.Listen(":3000"))
 		return
