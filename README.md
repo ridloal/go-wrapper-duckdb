@@ -71,7 +71,7 @@ duckdb-wrapper.exe -server
 - File CSV yang akan diimport harus ditempatkan di folder `csv_data/`
 - File database akan disimpan di folder `database_duckdb/`
 - Gunakan semicolon (;) untuk mengakhiri query dalam mode interaktif
-- Untuk mode server, file CSV harus ditempatkan di folder csv_shared/
+- Untuk mode server, file CSV harus ditempatkan di folder `csv_shared/`
 - Server API berjalan pada port 3000
 - Import CSV melalui API berjalan secara asynchronous
 - Nama tabel akan dibuat otomatis dari nama file CSV (spasi diubah menjadi underscore)
@@ -93,59 +93,83 @@ duckdb-wrapper.exe -file queries/create_tables.sql
 
 ### 6. Mode Server
 Dengan database spesifik:
-
-bash
-Run
+```bash
 duckdb-wrapper.exe -db database_duckdb/mydb.duckdb -server
+```
+
 Server akan berjalan pada port 3000 dengan endpoint berikut:
 
-Health Check
+#### Health Check
 
-Endpoint: GET /health
-Deskripsi: Mengecek status server
+**Endpoint**: GET /health  
+**Deskripsi**: Mengecek status server
 
 ```bash
 curl -X GET http://localhost:3000/health
 ```
 
-Response:
-json
+**Response**:
 ```json
-{  "status": "healthy",  "timestamp": "2024-02-20T10:00:00Z"}
-Import CSV
+{
+  "status": "healthy",
+  "timestamp": "2024-02-20T10:00:00Z"
+}
 ```
 
-Endpoint: POST /import-csv
-Deskripsi: Mengimport semua file CSV dari folder csv_shared/ secara asynchronous
-Proses:
-Mengubah spasi dalam nama file menjadi underscore untuk nama tabel
-Mengabaikan error pada saat import dengan parameter ignore_errors=true
+#### Import CSV
+
+**Endpoint**: POST /import-csv  
+**Deskripsi**: Mengimport semua file CSV dari folder csv_shared/ secara asynchronous  
+**Proses**:
+- Mengubah spasi dalam nama file menjadi underscore untuk nama tabel
+- Mengabaikan error pada saat import dengan parameter ignore_errors=true
 
 ```bash
 curl -X POST http://localhost:3000/import-csv
 ```
 
-Response Success:
-json
-
+**Response Success**:
 ```json
-{  "message": "Import process started",  "status": {    "is_running": true,    "start_time": "2024-02-20T10:00:00Z",    "total_files": 2,    "processed_files": 0  }}
-Response Error (jika proses import sedang berjalan):
-json
+{
+  "message": "Import process started",
+  "status": {
+    "is_running": true,
+    "start_time": "2024-02-20T10:00:00Z",
+    "total_files": 2,
+    "processed_files": 0
+  }
+}
 ```
-```json
-{  "error": "Import process is already running",  "status": {    "is_running": true,    "start_time": "2024-02-20T10:00:00Z",    "total_files": 2,    "processed_files": 1  }}
-```
-Import Status
 
-Endpoint: GET /import-status
-Deskripsi: Mendapatkan status proses import yang sedang berjalan
+**Response Error** (jika proses import sedang berjalan):
+```json
+{
+  "error": "Import process is already running",
+  "status": {
+    "is_running": true,
+    "start_time": "2024-02-20T10:00:00Z",
+    "total_files": 2,
+    "processed_files": 1
+  }
+}
+```
+
+#### Import Status
+
+**Endpoint**: GET /import-status  
+**Deskripsi**: Mendapatkan status proses import yang sedang berjalan
 
 ```bash
 curl http://localhost:3000/import-status
 ```
-Response:
+
+**Response**:
 ```json
-{  "is_running": true,  "start_time": "2024-02-20T10:00:00Z",  "total_files": 2,  "processed_files": 1,  "last_error": "error message if any"}
+{
+  "is_running": true,
+  "start_time": "2024-02-20T10:00:00Z",
+  "total_files": 2,
+  "processed_files": 1,
+  "last_error": "error message if any"
+}
 ```
-        
