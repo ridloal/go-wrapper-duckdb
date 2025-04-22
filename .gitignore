@@ -1,0 +1,3 @@
+*.exe
+database_duckdb/*
+!database_duckdb/.gitkeep
