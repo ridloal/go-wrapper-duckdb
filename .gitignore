@@ -1,4 +1,6 @@
 *.exe
 csv_shared/*
+!csv_shared/sample.csv
 database_duckdb/*
+!database_duckdb/sample.duckdb
 !database_duckdb/.gitkeep
