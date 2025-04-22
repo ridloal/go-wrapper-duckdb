@@ -1,4 +1,4 @@
-# Dokumentasi Go Wrapper DuckDB
+# Dokumentasi Go Wrapper DuckDB ETL
 
 ## Cara Menjalankan Program
 

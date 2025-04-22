@@ -4,7 +4,10 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"log"
 
+	"github.com/gofiber/fiber/v2"
+	"github.com/ridloal/go-wrapper-duckdb/internal/api"
 	"github.com/ridloal/go-wrapper-duckdb/internal/cli"
 	"github.com/ridloal/go-wrapper-duckdb/internal/database"
 )
@@ -14,8 +17,8 @@ func main() {
 	flags := cli.ParseFlags()
 
 	// Validate input
-	if flags.Query == "" && flags.File == "" && !flags.Interactive && !flags.ImportCSV {
-		fmt.Println("Error: You must specify either -query, -file, -interactive, or -import-csv")
+	if flags.Query == "" && flags.File == "" && !flags.Interactive && !flags.ImportCSV && !flags.Server {
+		fmt.Println("Error: You must specify either -query, -file, -interactive, -import-csv, or -server")
 		flag.Usage()
 		os.Exit(1)
 	}
@@ -32,6 +35,15 @@ func main() {
 	// Execute based on input mode
 	var err error
 	switch {
+	case flags.Server:
+		app := fiber.New()
+		
+		// API routes
+		app.Get("/health", api.HealthCheck)
+		app.Post("/import-csv", api.ImportCSV(db))
+
+		log.Fatal(app.Listen(":3000"))
+		return
 	case flags.ImportCSV:
 		err = cli.ImportCSV(db)
 	case flags.Query != "":
