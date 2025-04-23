@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/ridloal/go-wrapper-duckdb/internal/api"
@@ -37,11 +37,12 @@ func main() {
 	switch {
 	case flags.Server:
 		app := fiber.New()
-		
+
 		// API routes
 		app.Get("/health", api.HealthCheck)
 		app.Post("/import-csv", api.ImportCSV(db))
 		app.Get("/import-status", api.GetImportStatus)
+		app.Post("/query", api.ExecuteQuery(db))
 
 		log.Fatal(app.Listen(":3000"))
 		return
